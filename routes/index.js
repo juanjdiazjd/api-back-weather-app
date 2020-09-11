@@ -28,10 +28,13 @@ functions.getDataCity(ip).then(body=>{
 });
 
 router.get('/v1/current/:city?',async(req,res)=>{
+    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    if(ip == '::1' || ip.includes("::")){ip =  await publicIp.v4()}
+   
     let city = req.params.city
     let data = {}
     if(!city){
-        functions.getDataCity.then(body=>{
+        functions.getDataCity(ip).then(body=>{
             functions.getWeatherData(body["city"]).then(response=>{
 
                 data["weatherData"] = response
@@ -50,10 +53,13 @@ router.get('/v1/current/:city?',async(req,res)=>{
 })
 
 router.get('/v1/forecast/:city?',async(req,res)=>{
+    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    if(ip == '::1' || ip.includes("::")){ip =  await publicIp.v4()}
+   
     let city = req.params.city
     let data = {}
     if(!city){
-        functions.getDataCity.then(body=>{
+        functions.getDataCity(ip).then(body=>{
             functions.getForecastData(body["city"]).then(response=>{
 
                 data["forecastData"] = response
