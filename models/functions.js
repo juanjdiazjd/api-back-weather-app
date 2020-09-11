@@ -58,8 +58,9 @@ getForecastData: (city)=> (
       if (Object.entries(body).length) {
         const forecast = [];
         for (let i = 0; i < body.list.length; i += 8) {
-          forecast.push(mapForecastData(body.list[i + 4],body.city));
+          forecast.push(mapForecastData(body.list[i + 4]));
         }
+        forecast[0]["locationData"] = body.city
         resolve(forecast);
       }});
  })();
@@ -85,9 +86,8 @@ getForecastData: (city)=> (
 
 }
 
-function mapForecastData(data,cityData) {
+function mapForecastData(data) {
   const mapeo = {
-    locationData: cityData,
     forecastData:{
     date: data.dt * 1000,
     humidity: data.main.humidity,

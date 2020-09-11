@@ -37,7 +37,7 @@ router.get('/v1/current/:city?',async(req,res)=>{
         functions.getDataCity(ip).then(body=>{
             functions.getWeatherData(body["city"]).then(response=>{
 
-                data["weatherData"] = response
+                data["weatherData"] = response[0].weatherData
                 data["locationData"] = body
                 res.status(200).send(data)
             })
