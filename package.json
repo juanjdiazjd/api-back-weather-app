@@ -12,6 +12,7 @@
   "dependencies": {
     "@supercharge/request-ip": "^1.1.2",
     "body-parser": "^1.13.0",
+    "cors": "^2.8.5",
     "express": "^4.12.4",
     "ip": "^1.1.5",
     "node-fetch": "^2.6.1",

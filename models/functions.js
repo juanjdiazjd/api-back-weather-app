@@ -125,7 +125,7 @@ function mapForecastData(data) {
         coord:data.list[0].coord,
         country: data.list[0].sys.country,
       },
-      weatherData:data
+      weatherData:data.list[0]
 
     };
   
