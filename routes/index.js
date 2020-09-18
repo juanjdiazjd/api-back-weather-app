@@ -45,7 +45,7 @@ router.get('/v1/current/:city?',async(req,res)=>{
         })
     }else{
         functions.getWeatherData(city).then(response=>{
-            res.status(200).send(response)
+            res.status(200).send(response[0])
         })
         
     }
@@ -70,7 +70,8 @@ router.get('/v1/forecast/:city?',async(req,res)=>{
         })
     }else{
         functions.getForecastData(city).then(response=>{
-            res.status(200).send(response)
+            data["forecastData"]= response
+            res.status(200).send(data)
         })
         
     }
