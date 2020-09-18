@@ -9,14 +9,14 @@ var bodyParser = require('body-parser');
 
 router.use(bodyParser.json());
 
-router.get('/v1/alive', (req, res) =>{
+router.get('/alive', (req, res) =>{
     
     res.send("Alive!!")
 
 });
 
 
-router.get('/v1/location', async (req, res) =>{
+router.get('/location', async (req, res) =>{
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
     if(ip == '::1' || ip.includes("::")){ip =  await publicIp.v4()}
    
@@ -27,7 +27,7 @@ functions.getDataCity(ip).then(body=>{
 
 });
 
-router.get('/v1/current/:city?',async(req,res)=>{
+router.get('/current/:city?',async(req,res)=>{
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
     if(ip == '::1' || ip.includes("::")){ip =  await publicIp.v4()}
    
@@ -52,7 +52,7 @@ router.get('/v1/current/:city?',async(req,res)=>{
     
 })
 
-router.get('/v1/forecast/:city?',async(req,res)=>{
+router.get('/forecast/:city?',async(req,res)=>{
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
     if(ip == '::1' || ip.includes("::")){ip =  await publicIp.v4()}
    
