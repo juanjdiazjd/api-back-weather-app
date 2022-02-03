@@ -14,7 +14,7 @@ describe('Testeando rutas de la api v1', function() {
       return supertest 
         .get('/v1/location') 
         .expect(200)
-        .set('x-forwarded-for', "47.27.204.107")
+        .set('x-forwarded-for', "45.207.243.10")
         .expect('Content-Type', /json/) 
         .expect(function(res) {
           expect(res.body.regionName).to.eql("California");
@@ -24,26 +24,21 @@ describe('Testeando rutas de la api v1', function() {
   });
   
   describe('/v1/current', function() {
-    it('GET responde con los datos del clima actual de Rusia.', function() {
+    it('POST responde con los datos del clima actual de Rusia.', function() {
       functions.getWeatherData("Rusia").then(response=>{
         response = response[0].weatherData
         return supertest 
-        .get('/v1/current/Rusia') 
+        .post('/v1/current/')
+        .body({city:"Rusia"}) 
         .expect(200)
         .expect('Content-Type', /json/) 
         .expect(function(res) {
           
-     
         console.log(res.body)
           expect(res.body[0].weatherData).to.eql(response);
         });
     });
       })
-   
-   
-
-
-
 
   });
 

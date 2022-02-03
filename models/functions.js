@@ -1,141 +1,67 @@
 'use strict';
-const publicIp = require('public-ip');
+const { mapForecastData, mapCurrentData } = require('./utils');
 const fetch = require('node-fetch');
-let url_ip_api = 'http://ip-api.com/json/'
-
-const {api_key} = require('../keys.js');
-
-
-let url_api_open_weather  = "https://api.openweathermap.org/data/2.5/"
+const URL_IP_API = process.env.URL_IP_API
+const API_WEATHER_KEY = process.env.API_WEATHER_KEY
+const URL_OPEN_WEATHER_API = process.env.URL_OPEN_WEATHER_API
 let ip_public
-
 
 module.exports.ip_public = ip_public
 module.exports = {
-  
-
-     getDataCity:(ip_public)=>( new Promise( function(resolve,reject){
-
-      (async () => {    
-        fetch( url_ip_api+ ip_public + "?fields=status,country,countryCode,region,regionName,city,zip,lat,lon,timezone")
+  getDataCity: (ip_public) => (new Promise(function (resolve, reject) {
+    (async () => {
+      fetch(URL_IP_API + ip_public + "?fields=status,country,countryCode,region,regionName,city,zip,lat,lon,timezone")
         .then(res => res.json())
         .then(body => {
-    
-          resolve(body) });
-   
+
+          resolve(body)
+        });
     })();
-    
+  })),
 
-})),
-
- getWeatherData: (city)=> (
-   
- new Promise( function(resolve,reject){
-  (async () => {
-    let url_query = url_api_open_weather +"find?q="+city+"&units=metric&appid=" +api_key
-    // console.log(url_query)
-    fetch( url_query)
-    .then(res => res.json())
-    .then(body => {
-      const weather=[]
-      weather.push(mapCurrentData(body))
-      // console.log(weather)
-
-      resolve(weather) });
-})();
-
-
-})),
-
-getForecastData: (city)=> (
-   
-  new Promise( function(resolve,reject){
-   (async () => {
-     let url_query = url_api_open_weather +"forecast?q="+city+"&units=metric&appid=" +api_key
-     fetch( url_query)
-     .then(res => res.json())
-     .then(body => {
-      if (Object.entries(body).length) {
-        const forecast = [];
-        for (let i = 0; i < body.list.length; i += 8) {
-          forecast.push(mapForecastData(body.list[i + 4]));
+  getWeatherData: (city, lat, lon) => (
+    new Promise(function (resolve, reject) {
+      (async () => {
+        let query = URL_OPEN_WEATHER_API + "weather?lat=" + lat + "&lon=" + lon + "&units=metric&appid=" + API_WEATHER_KEY
+        if (city) {
+          query = URL_OPEN_WEATHER_API + "weather?q=" + city.replace(" ", "%20") + "&units=metric&appid=" + API_WEATHER_KEY
         }
-        forecast[0]["locationData"] = body.city
-        resolve(forecast);
-      }});
- })();
- 
- 
- })),
- setIp:(ip)=>{
-  (async()=>{
-  
-    return ip_public = ip
-  })
- },
- getIp:()=>{
-  (async()=>{
-  
-    return 
-  })
- }
+        fetch(query)
+          .then(res => res.json())
+          .then(body => {
+            const weather = []
+            weather.push(mapCurrentData(body))
+            resolve(weather)
+          }).catch(error => {
+            reject(error)
+          })
 
- 
+      })();
+    })),
 
+  getForecastData: (city, lat, lon) => (
+    new Promise(function (resolve, reject) {
+      (async () => {
+        let query = URL_OPEN_WEATHER_API + "forecast?lat=" + lat + "&lon=" + lon + "&units=metric&appid=" + API_WEATHER_KEY
+        if (city) {
+          query = URL_OPEN_WEATHER_API + "forecast?q=" + city.replace(" ", "%20") + "&units=metric&appid=" + API_WEATHER_KEY
+        }
 
-
+        fetch(query)
+          .then(res => res.json())
+          .then(body => {
+            if (Object.entries(body).length) {
+              const forecast = [];
+              for (let i = 0; i < body.list.length; i += 8) {
+                forecast.push(mapForecastData(body.list[i + 4]));
+              }
+              forecast["location"] = body.city
+              resolve(forecast);
+            }
+          }).catch(error => {
+            reject(error)
+          })
+      })();
+    })),
 }
-
-function mapForecastData(data) {
-  const mapeo = {
-    forecastData:{
-    date: data.dt * 1000,
-    humidity: data.main.humidity,
-    icon_id: data.weather[0].id,
-    temperature: data.main.temp,
-    description: data.weather[0].description,
-    wind_speed: Math.round(data.wind.speed * 3.6), 
-    condition: data.cod}
-  };
-
-
-  if (data.dt_txt) {
-    mapeo.dt_txt = data.dt_txt;
-  }
-
-  if (data.weather[0].icon) {
-    mapeo.icon = data.weather[0].icon;
-  }
-
-  if (data.main.temp_min && data.main.temp_max) {
-    mapeo.max = data.main.temp_max;
-    mapeo.min = data.main.temp_min;
-  }
-  Object.keys(mapeo).forEach(
-    key => mapeo[key] === undefined && delete data[key]
-  );
-
-  return mapeo;
-  }
-
-  function mapCurrentData(data) {
-    const mapeo = {
-      locationData: {
-        city: data.list[0].name,
-        coord:data.list[0].coord,
-        country: data.list[0].sys.country,
-      },
-      weatherData:data.list[0]
-
-    };
-  
-
-    Object.keys(mapeo).forEach(
-      key => mapeo[key] === undefined && delete data[key]
-    );
-  
-    return mapeo;
-    }
-
- 
 
