@@ -56,7 +56,6 @@ router.post('/forecast/', async (req, res) => {
     let lat = req.body.lat
     let lon = req.body.lon
     let data = {}
-    console.log("city in req: ", city)
 
     if (_.isEmpty(city)|| _.isNull(city)) {
         var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
