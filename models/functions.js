@@ -46,7 +46,6 @@ module.exports = {
         if (city) {
           query = URL_OPEN_WEATHER_API + "forecast?q=" + city.replace(" ", "%20") + "&units=metric&appid=" + API_WEATHER_KEY
         }
-
         fetch(query)
           .then(res => res.json())
           .then(body => {

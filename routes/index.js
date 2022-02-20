@@ -57,7 +57,7 @@ router.post('/forecast/', async (req, res) => {
     let lon = req.body.lon
     let data = {}
 
-    if (_.isEmpty(city)|| _.isNull(city)) {
+    if (!!city) {
         var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
         if (ip == '::1' || ip.includes("::")) { ip = await publicIp.v4() }
         functions.getDataCity(ip).then(body => {
